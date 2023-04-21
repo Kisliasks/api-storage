@@ -7,14 +7,15 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "mezzio/mezzio-problem-details": "^1.11",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.2.*",
+        "symfony/mime": "6.2.*",
         "symfony/runtime": "6.2.*",
+        "symfony/validator": "6.2.*",
         "symfony/yaml": "6.2.*"
-    },
-    "require-dev": {
     },
     "config": {
         "allow-plugins": {
