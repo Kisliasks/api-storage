@@ -20,7 +20,7 @@ class FileConstraintFactory
             'file' => [
                 new Type('string'),
                 new File([
-                    'maxSize' => '1100000',
+                    'maxSize' => '3145728',
                     'mimeTypes' => FileType::all(),
                     'extensions' => [
                         FileType::getExt(FileType::JPEG),
