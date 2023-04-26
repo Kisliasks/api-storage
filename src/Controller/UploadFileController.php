@@ -3,19 +3,20 @@
 namespace App\Controller;
 
 use App\DTO\File;
-use App\Error\AbstractProblemJsonError;
+use App\Helpers\FileHelper;
+use App\Helpers\FileExtractor;
+use App\Presenter\FilePresenter;
+use App\ValueObject\TempMovedFile;
 use App\Error\ValidateErrorGenerator;
 use App\Factory\FileConstraintFactory;
-use App\Helpers\FileExtractor;
-use App\Helpers\FileHelper;
+use App\Error\AbstractProblemJsonError;
 use App\Interfaces\FileServiceInterface;
-use App\Presenter\FilePresenter;
+use Symfony\Component\Validator\Validation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Validator\Validation;
 
 class UploadFileController extends AbstractController
 {
@@ -32,11 +33,12 @@ class UploadFileController extends AbstractController
     public function uploadFile(Request $request): Response
     {
         /** @var UploadedFile $file */
-        $file = $request->files->get('image');
-        $filePath = $this->fileHelper->processFile($file);
+        $file = $request->files->get('file');
+        /** @var TempMovedFile $tempMovedFile */
+        $tempMovedFile = $this->fileHelper->processFile($file);
 
         $requestData = $request->request->all();
-        $requestData['file'] = $filePath;
+        $requestData['file'] = $tempMovedFile->getFilePath();
 
         $validator = Validation::createValidator();
         $violations = $validator->validate($requestData, $this->constraintFactory->build());
@@ -44,8 +46,8 @@ class UploadFileController extends AbstractController
             try {
                 $this->exceptionGenerator->generate($violations);
             } catch (AbstractProblemJsonError $e) {
-                if (is_readable($filePath)) {
-                    unlink($filePath);
+                if (is_readable($tempMovedFile->getFilePath())) {
+                    unlink($tempMovedFile->getFilePath());
                 }
                 return new JsonResponse(
                     $e->jsonSerialize(),
@@ -53,16 +55,18 @@ class UploadFileController extends AbstractController
                 );
             } 
         }
-        
-        $file = new File(
-            'some-uuid',
+        $approvedFile = $this->fileHelper->processApprovedFile($tempMovedFile);       
+
+        // добавить в модель путь к файлу и в базу колонку с путем
+        $fileForDb = new File(
+            $approvedFile->getFileUuid(),
             '378509845',
             FileExtractor::extract($requestData)
         );
  
         return new JsonResponse(
             $this->filePresenter->present(
-                $this->fileService->createFile($file)
+                $this->fileService->createFile($fileForDb)
             )
         );
     }
