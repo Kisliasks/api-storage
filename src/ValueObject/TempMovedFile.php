@@ -36,4 +36,12 @@ class TempMovedFile
     {
         return $this->fileExtension;
     }
+
+    /**
+     * @return void
+     */
+    public function delete(): void
+    {
+        is_readable($this->filePath) ? unlink($this->filePath) : null;
+    }
 }

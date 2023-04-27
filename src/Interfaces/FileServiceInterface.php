@@ -9,4 +9,6 @@ use App\DTO\File;
 interface FileServiceInterface
 {
     public function createFile(File $file): File;
+
+    public function getFileByUuid(string $uuid): File;
 }

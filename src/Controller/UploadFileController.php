@@ -46,9 +46,8 @@ class UploadFileController extends AbstractController
             try {
                 $this->exceptionGenerator->generate($violations);
             } catch (AbstractProblemJsonError $e) {
-                if (is_readable($tempMovedFile->getFilePath())) {
-                    unlink($tempMovedFile->getFilePath());
-                }
+                $tempMovedFile->delete();
+
                 return new JsonResponse(
                     $e->jsonSerialize(),
                     $e->getCode()
@@ -57,11 +56,11 @@ class UploadFileController extends AbstractController
         }
         $approvedFile = $this->fileHelper->processApprovedFile($tempMovedFile);       
 
-        // добавить в модель путь к файлу и в базу колонку с путем
         $fileForDb = new File(
             $approvedFile->getFileUuid(),
             '378509845',
-            FileExtractor::extract($requestData)
+            FileExtractor::extract($requestData),
+            $approvedFile->getFilePath()
         );
  
         return new JsonResponse(

@@ -12,12 +12,16 @@ use Symfony\Component\Uid\Uuid;
 class FileHelper
 {
     private const MOCK_FILE_PASS = 'non-existent file path';
+    private const MOCK_FILE_NAME = 'non-existent file name';
+    private const MOCK_FILE_EXT = 'non-existent file extension';
     private const APPROVED_FILE_PREFIX = 'approved_';
 
     public function processFile(?UploadedFile $file): TempMovedFile
     {
         if (!isset($file)) {
             $filePath = self::MOCK_FILE_PASS;
+            $fileName = self::MOCK_FILE_NAME;
+            $fileExtension = self::MOCK_FILE_NAME;
         } else {
             $fileName = uniqid('someFile');
             $fileExtension = "." . $file->getClientOriginalExtension();

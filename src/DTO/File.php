@@ -9,7 +9,8 @@ class File
     public function __construct(
         private readonly string $uuid,
         private readonly int $accountId,
-        private readonly array $payload
+        private readonly array $payload,
+        private readonly string $localPath,
     ) {
     }
 
@@ -35,5 +36,13 @@ class File
     public function getPayload(): array
     {
         return $this->payload;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocalPath(): string
+    {
+        return $this->localPath;
     }
 }
