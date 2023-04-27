@@ -56,6 +56,9 @@ class UploadFileController extends AbstractController
         }
         $approvedFile = $this->fileHelper->processApprovedFile($tempMovedFile);       
 
+        // добавить генерацию доп значения для файла, 
+        // чтобы нельзя было подменить токен и получить любой другой файл
+        // генерить второй токен при создании файла и помещать в строку с файлом в бд
         $fileForDb = new File(
             $approvedFile->getFileUuid(),
             '378509845',

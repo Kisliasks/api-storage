@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Test\Constraint\ResponseStatusCodeSame;
 
 class GetFileController extends AbstractController
 {
@@ -28,10 +29,10 @@ class GetFileController extends AbstractController
             $response = $this->filePresenter->present(
                 $this->fileService->getFileByUuid($fileId)
             );
-            $statusCode = '200';
+            $statusCode = JsonResponse::HTTP_ACCEPTED;
         } catch (EntityNotFoundException) {
             $response = null;
-            $statusCode = '204';
+            $statusCode = JsonResponse::HTTP_NO_CONTENT;
         }
         
         return new JsonResponse($response, $statusCode);

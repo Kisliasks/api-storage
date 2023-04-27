@@ -46,7 +46,4 @@ class FileService implements FileServiceInterface
 
         return $fileFromDb->toDto();
     }
-
-
-
 }
