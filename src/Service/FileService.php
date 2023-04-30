@@ -8,6 +8,7 @@ use App\DTO\File;
 use App\Entity\File as EntityFile;
 use App\Interfaces\FileServiceInterface;
 use App\Repository\FileRepository;
+use App\ValueObject\ParsedFileToken;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,9 +38,27 @@ class FileService implements FileServiceInterface
         return $fileEntity->toDto();
     }
 
+    public function getFileByToken(ParsedFileToken $token): File
+    {
+        $fileFromDb = $this->fileRepository->findOneBy(
+            ['uuid' => $token->getFileUuid()]
+        );
+        if ($fileFromDb === null) {
+            throw new EntityNotFoundException();
+        }
+        $fileNameFromDb = $fileFromDb->getPayload()['file_name'];
+        if ($token->getFileName() !== $fileNameFromDb) {
+            throw new EntityNotFoundException();
+        }
+
+        return $fileFromDb->toDto();
+    }
+
     public function getFileByUuid(string $uuid): File
     {
-        $fileFromDb = $this->fileRepository->findOneBy(['uuid' => $uuid]);
+        $fileFromDb = $this->fileRepository->findOneBy(
+            ['uuid' => $uuid]
+        );
         if ($fileFromDb === null) {
             throw new EntityNotFoundException();
         }

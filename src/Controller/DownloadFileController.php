@@ -3,15 +3,15 @@
 namespace App\Controller;
 
 use App\Helpers\FileHelper;
-use App\Interfaces\FileServiceInterface;
+use App\Helpers\FileResponse;
 use App\Presenter\FilePresenter;
+use App\ValueObject\ParsedFileToken;
+use App\Interfaces\FileServiceInterface;
 use Doctrine\ORM\EntityNotFoundException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DownloadFileController extends AbstractController
 {
@@ -19,8 +19,7 @@ class DownloadFileController extends AbstractController
         private readonly FileServiceInterface $fileService,
         private readonly FilePresenter $filePresenter,
         private readonly FileHelper $fileHelper,
-    )
-    {
+    ) {
 
     }
 
@@ -29,16 +28,16 @@ class DownloadFileController extends AbstractController
         $fileToken = $request->attributes->get('token');
 
         try {
-            $fileFromDb = $this->fileService->getFileByUuid($fileToken);
-        } catch (EntityNotFoundException) {
-            return new JsonResponse(
-                null,
-                JsonResponse::HTTP_NO_CONTENT
+            /** @var ParsedFileToken $parsedFileToken */
+            $parsedFileToken = $this->fileHelper->parseFileTokenFromRequest($fileToken);
+
+            return FileResponse::downloadFileResponse(
+                $this->fileService->getFileByToken($parsedFileToken)
             );
+        } catch (EntityNotFoundException) {
+            return FileResponse::httpNotFoundResponse();
+        } catch (Exception $e) {
+            return FileResponse::errorFileResponse($e->getMessage());
         }
-        
-        $response = $this->fileHelper->generateDownloadFileResponse($fileFromDb);
-        
-        return $response;
     }
 }

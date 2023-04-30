@@ -10,6 +10,7 @@ use App\ValueObject\TempMovedFile;
 use App\Error\ValidateErrorGenerator;
 use App\Factory\FileConstraintFactory;
 use App\Error\AbstractProblemJsonError;
+use App\Helpers\FileResponse;
 use App\Interfaces\FileServiceInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ class UploadFileController extends AbstractController
         private readonly FileHelper $fileHelper,
         private readonly FileServiceInterface $fileService,
         private readonly FilePresenter $filePresenter,
-    ){
+    ) {
 
     }
 
@@ -48,9 +49,9 @@ class UploadFileController extends AbstractController
             } catch (AbstractProblemJsonError $e) {
                 $tempMovedFile->delete();
 
-                return new JsonResponse(
+                return FileResponse::errorFileResponse(
                     $e->jsonSerialize(),
-                    $e->getCode()
+                    $e->getCode(),
                 );
             } 
         }
@@ -63,7 +64,7 @@ class UploadFileController extends AbstractController
             $approvedFile->getFileUuid(),
             '378509845',
             FileExtractor::extract($requestData),
-            $approvedFile->getFilePath()
+            $approvedFile->getFilePath(),
         );
  
         return new JsonResponse(

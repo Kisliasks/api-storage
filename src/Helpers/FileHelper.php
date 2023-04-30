@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
-use App\DTO\File;
+use App\Enum\FileExpression;
 use App\ValueObject\ApprovedFile;
+use App\ValueObject\ParsedFileToken;
 use App\ValueObject\TempMovedFile;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Uid\Uuid;
 
 class FileHelper
@@ -17,7 +17,6 @@ class FileHelper
     private const MOCK_FILE_INFO = 'non-existent file info';
     private const APPROVED_FILE_PREFIX = 'approved_';
     private const FILE_STORAGE_DIRECTORY = '../files_storage';
-    private const CONTENT_TYPE_DOWNLOAD = 'image/gif';
 
     public function processFile(?UploadedFile $file): TempMovedFile
     {
@@ -44,7 +43,7 @@ class FileHelper
         $newFilePath = str_replace(
             $tempMovedFile->getFileName() . $tempMovedFile->getFileExtension(),
             $newFileName . $tempMovedFile->getFileExtension(),
-            $tempMovedFile->getFilePath()
+            $tempMovedFile->getFilePath(),
         );
         rename($tempMovedFile->getFilePath(), $newFilePath);
 
@@ -52,19 +51,32 @@ class FileHelper
             $newFileName,
             $newFilePath,
             $tempMovedFile->getFileExtension(),
-            $fileUuid
+            $fileUuid,
         );
     }
 
-    public function generateDownloadFileResponse(File $file): BinaryFileResponse
+    /**
+     * @param string $token
+     * @return ParsedFileToken
+     * @throws Exception
+     */
+    public function parseFileTokenFromRequest(string $token): ParsedFileToken
     {
-        $response = new BinaryFileResponse($file->getLocalPath());
-        $response->headers->set('Content-Type', self::CONTENT_TYPE_DOWNLOAD);
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $file->getPayload()['file_name']
-        );
+        if (
+            !preg_match(
+                FileExpression::FILE_TOKEN_EXPRESSION->value,
+                $token,
+                $matches
+            )
+        ) {
+            throw new Exception('Invalid file token');
+        } 
+        $fileName = $matches[2];
+        $fileUuid = $matches[1];
 
-        return $response;
+        return new ParsedFileToken(
+            $fileName,
+            $fileUuid,
+        );
     }
 }

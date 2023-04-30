@@ -2,14 +2,13 @@
 
 namespace App\Controller;
 
+use App\Helpers\FileResponse;
 use App\Interfaces\FileServiceInterface;
 use App\Presenter\FilePresenter;
 use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Test\Constraint\ResponseStatusCodeSame;
 
 class GetFileController extends AbstractController
 {
@@ -26,15 +25,13 @@ class GetFileController extends AbstractController
         $fileId = $request->attributes->get('id');
 
         try {
-            $response = $this->filePresenter->present(
-                $this->fileService->getFileByUuid($fileId)
+            return FileResponse::httpAcceptedResponse(
+                $this->filePresenter->present(
+                    $this->fileService->getFileByUuid($fileId)
+                )
             );
-            $statusCode = JsonResponse::HTTP_ACCEPTED;
         } catch (EntityNotFoundException) {
-            $response = null;
-            $statusCode = JsonResponse::HTTP_NO_CONTENT;
+            return FileResponse::httpNotFoundResponse();
         }
-        
-        return new JsonResponse($response, $statusCode);
     }
 }
