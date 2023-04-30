@@ -25,7 +25,7 @@ class GetFileController extends AbstractController
         $fileId = $request->attributes->get('id');
 
         try {
-            return FileResponse::httpAcceptedResponse(
+            return FileResponse::httpOkResponse(
                 $this->filePresenter->present(
                     $this->fileService->getFileByUuid($fileId)
                 )

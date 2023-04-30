@@ -34,11 +34,11 @@ class FileResponse
         );
     }
 
-    public static function httpAcceptedResponse(array $responseData = null): JsonResponse
+    public static function httpOkResponse(array $responseData = null): JsonResponse
     {
         return new JsonResponse(
             $responseData,
-            JsonResponse::HTTP_ACCEPTED,
+            JsonResponse::HTTP_OK,
         );
     }
 

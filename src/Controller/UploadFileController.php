@@ -67,7 +67,7 @@ class UploadFileController extends AbstractController
             $approvedFile->getFilePath(),
         );
  
-        return new JsonResponse(
+        return FileResponse::httpOkResponse(
             $this->filePresenter->present(
                 $this->fileService->createFile($fileForDb)
             )
