@@ -30,6 +30,7 @@ class FileService implements FileServiceInterface
         $fileEntity->setUuid($file->getUuid());
         $fileEntity->setAccountId($file->getAccountId());
         $fileEntity->setPayload($file->getPayload());
+        $fileEntity->setDownloadLink($file->getDownloadLink());
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($fileEntity);

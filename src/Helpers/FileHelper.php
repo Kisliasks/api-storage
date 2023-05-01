@@ -102,4 +102,12 @@ class FileHelper
             $fileExt,
         );
     }
+
+    public function generateDownloadLink(string $fileName, string $fileUuid): string
+    {
+       $downloadLink = 'http://' . $_SERVER['SERVER_NAME'] . '/api/files/download/' . $fileUuid .
+       '&name=' . $fileName;
+
+       return $downloadLink;
+    }
 }

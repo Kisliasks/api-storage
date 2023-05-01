@@ -64,6 +64,9 @@ class UploadFileController extends AbstractController
                     $requestData['file_name'], $approvedFile
                 )
             ),
+            $this->fileHelper->generateDownloadLink(
+                $requestData['file_name'], $approvedFile->getFileUuid()
+            ),
         );
  
         return FileResponse::httpOkResponse(

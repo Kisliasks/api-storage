@@ -10,6 +10,7 @@ final readonly class File
         private string $uuid,
         private int $accountId,
         private array $payload,
+        private string $downloadLink,
     ) {
     }
 
@@ -35,5 +36,13 @@ final readonly class File
     public function getPayload(): array
     {
         return $this->payload;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDownloadLink(): string
+    {
+        return $this->downloadLink;
     }
 }

@@ -23,6 +23,9 @@ class File
     #[ORM\Column]
     private int $account_id;
 
+    #[ORM\Column(length: 100)]
+    private string $download_link;
+
     public function getId(): int
     {
         return $this->id;
@@ -70,6 +73,19 @@ class File
             $this->getUuid(),
             $this->getAccountId(),
             $this->getPayload(),
+            $this->getDownloadLink(),
         );
+    }
+
+    public function getDownloadLink(): string
+    {
+        return $this->download_link;
+    }
+
+    public function setDownloadLink(string $download_link): self
+    {
+        $this->download_link = $download_link;
+
+        return $this;
     }
 }

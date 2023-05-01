@@ -18,6 +18,7 @@ class FilePresenter
                 'file_size' => $payload['file_size'],
                 'mime_type' => $payload['mime_type'],
                 'file_extension' => $payload['file_extension'],
+                'download_link' => $file->getDownloadLink(),
             ]
         ];
     }
