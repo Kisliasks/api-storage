@@ -32,7 +32,7 @@ class DownloadFileController extends AbstractController
             $parsedFileToken = $this->fileHelper->parseFileTokenFromRequest($fileToken);
 
             return FileResponse::downloadFileResponse(
-                $this->fileService->getFileByToken($parsedFileToken)
+                $this->fileService->getFileFromStorage($parsedFileToken)
             );
         } catch (EntityNotFoundException) {
             return FileResponse::httpNotFoundResponse();

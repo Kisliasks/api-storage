@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
+use App\DTO\File;
+use App\Enum\FileConfig;
 use App\Enum\FileExpression;
 use App\ValueObject\ApprovedFile;
+use App\ValueObject\FilePayload;
 use App\ValueObject\ParsedFileToken;
 use App\ValueObject\TempMovedFile;
 use Exception;
@@ -14,22 +17,18 @@ use Symfony\Component\Uid\Uuid;
 
 class FileHelper
 {
-    private const MOCK_FILE_INFO = 'non-existent file info';
-    private const APPROVED_FILE_PREFIX = 'approved_';
-    private const FILE_STORAGE_DIRECTORY = '../files_storage';
-
     public function processFile(?UploadedFile $file): TempMovedFile
     {
         if (!isset($file)) {
-            $filePath = self::MOCK_FILE_INFO;
-            $fileName = self::MOCK_FILE_INFO;
-            $fileExtension = self::MOCK_FILE_INFO;
+            $filePath = FileConfig::MOCK_FILE_INFO;
+            $fileName = FileConfig::MOCK_FILE_INFO;
+            $fileExtension = FileConfig::MOCK_FILE_INFO;
         } else {
             $fileName = uniqid('someFile');
             $fileExtension = "." . $file->getClientOriginalExtension();
-            $filePath = self::FILE_STORAGE_DIRECTORY . DIRECTORY_SEPARATOR . $fileName . $fileExtension; 
+            $filePath = FileConfig::BASE_FILE_DIRECTORY . DIRECTORY_SEPARATOR . $fileName . $fileExtension; 
 
-            $file->move(self::FILE_STORAGE_DIRECTORY, $fileName . $fileExtension);
+            $file->move(FileConfig::BASE_FILE_DIRECTORY, $fileName . $fileExtension);
         }
 
         return new TempMovedFile($fileName, $filePath, $fileExtension);
@@ -38,7 +37,7 @@ class FileHelper
     public function processApprovedFile(TempMovedFile $tempMovedFile): ApprovedFile
     {
         $fileUuid = Uuid::v4()->toRfc4122();
-        $newFileName = self::APPROVED_FILE_PREFIX . $fileUuid;
+        $newFileName = FileConfig::APPROVED_FILE_PREFIX . $fileUuid;
 
         $newFilePath = str_replace(
             $tempMovedFile->getFileName() . $tempMovedFile->getFileExtension(),
@@ -77,6 +76,30 @@ class FileHelper
         return new ParsedFileToken(
             $fileName,
             $fileUuid,
+        );
+    }
+
+    public static function generateStorageFilePath(File $file): string
+    {
+        $filePath = FileConfig::BASE_FILE_DIRECTORY . DIRECTORY_SEPARATOR .
+        FileConfig::APPROVED_FILE_PREFIX . $file->getUuid() . $file->getPayload()['file_extension'];
+
+        return $filePath;
+    }
+
+    public function generateFilePayload(string $fileName, ApprovedFile $approvedFile): FilePayload
+    {
+        if (file_exists($localFilePath = $approvedFile->getFilePath())) {
+            $mimeType = mime_content_type($localFilePath);
+            $fileSize = filesize($localFilePath);
+            $fileExt = $approvedFile->getFileExtension();
+        }
+
+        return new FilePayload(
+            $fileName,
+            $fileSize,
+            $mimeType,
+            $fileExt,
         );
     }
 }

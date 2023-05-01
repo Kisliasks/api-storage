@@ -8,7 +8,7 @@ use App\DTO\File;
 
 class FilePresenter
 {
-    public function present(File $file): array
+    public function presentToHttp(File $file): array
     {
         $payload = $file->getPayload();
         return [
@@ -17,6 +17,7 @@ class FilePresenter
                 'file_name' => $payload['file_name'],
                 'file_size' => $payload['file_size'],
                 'mime_type' => $payload['mime_type'],
+                'file_extension' => $payload['file_extension'],
             ]
         ];
     }

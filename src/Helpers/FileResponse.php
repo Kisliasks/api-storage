@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
-use App\DTO\File;
-
+use App\ValueObject\FileFromStorage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -14,13 +13,13 @@ class FileResponse
 {
     private const CONTENT_TYPE_DOWNLOAD = 'image/gif';
 
-    public static function downloadFileResponse(File $file): BinaryFileResponse
+    public static function downloadFileResponse(FileFromStorage $file): BinaryFileResponse
     {
-        $response = new BinaryFileResponse($file->getLocalPath());
+        $response = new BinaryFileResponse($file->getFilePath());
         $response->headers->set('Content-Type', self::CONTENT_TYPE_DOWNLOAD);
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $file->getPayload()['file_name']
+            $file->getFileName(),
         );
 
         return $response;

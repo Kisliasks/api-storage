@@ -23,9 +23,6 @@ class File
     #[ORM\Column]
     private int $account_id;
 
-    #[ORM\Column(length: 255)]
-    private string $file_path;
-
     public function getId(): int
     {
         return $this->id;
@@ -73,19 +70,6 @@ class File
             $this->getUuid(),
             $this->getAccountId(),
             $this->getPayload(),
-            $this->getFilePath()
         );
-    }
-
-    public function getFilePath(): ?string
-    {
-        return $this->file_path;
-    }
-
-    public function setFilePath(?string $file_path): self
-    {
-        $this->file_path = $file_path;
-
-        return $this;
     }
 }

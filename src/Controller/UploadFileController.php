@@ -15,7 +15,6 @@ use App\Interfaces\FileServiceInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -55,21 +54,21 @@ class UploadFileController extends AbstractController
                 );
             } 
         }
-        $approvedFile = $this->fileHelper->processApprovedFile($tempMovedFile);       
-
-        // добавить генерацию доп значения для файла, 
-        // чтобы нельзя было подменить токен и получить любой другой файл
-        // генерить второй токен при создании файла и помещать в строку с файлом в бд
-        $fileForDb = new File(
+        $approvedFile = $this->fileHelper->processApprovedFile($tempMovedFile);
+        
+        $fileToDb = new File(
             $approvedFile->getFileUuid(),
             '378509845',
-            FileExtractor::extract($requestData),
-            $approvedFile->getFilePath(),
+            FileExtractor::extract(
+                $this->fileHelper->generateFilePayload(
+                    $requestData['file_name'], $approvedFile
+                )
+            ),
         );
  
         return FileResponse::httpOkResponse(
-            $this->filePresenter->present(
-                $this->fileService->createFile($fileForDb)
+            $this->filePresenter->presentToHttp(
+                $this->fileService->createFile($fileToDb)
             )
         );
     }

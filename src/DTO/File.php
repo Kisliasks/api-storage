@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-class File
+final readonly class File
 {
     public function __construct(
-        private readonly string $uuid,
-        private readonly int $accountId,
-        private readonly array $payload,
-        private readonly string $localPath,
+        private string $uuid,
+        private int $accountId,
+        private array $payload,
     ) {
     }
 
@@ -36,13 +35,5 @@ class File
     public function getPayload(): array
     {
         return $this->payload;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocalPath(): string
-    {
-        return $this->localPath;
     }
 }
