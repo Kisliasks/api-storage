@@ -1,8 +1,8 @@
 <?php
 
-use App\Controller\DownloadFileController;
-use App\Controller\GetFileController;
-use App\Controller\UploadFileController;
+use App\FileModule\Controller\DownloadFileController;
+use App\FileModule\Controller\GetFileController;
+use App\FileModule\Controller\UploadFileController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return function (RoutingConfigurator $routes) {

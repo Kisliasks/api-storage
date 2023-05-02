@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\DTO\File as DTOFile;
+use App\Application\DTO\File as DTOFile;
 use App\Repository\FileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
