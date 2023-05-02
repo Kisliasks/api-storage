@@ -28,7 +28,8 @@ class FileHelper
         } else {
             $fileName = uniqid('someFile');
             $fileExtension = "." . $file->getClientOriginalExtension();
-            $filePath = FileConfig::BASE_FILE_DIRECTORY . DIRECTORY_SEPARATOR . $fileName . $fileExtension; 
+            $filePath = FileConfig::BASE_FILE_DIRECTORY . DIRECTORY_SEPARATOR .
+                $fileName . $fileExtension; 
 
             $file->move(FileConfig::BASE_FILE_DIRECTORY, $fileName . $fileExtension);
         }
@@ -83,10 +84,9 @@ class FileHelper
 
     public static function generateStorageFilePath(File $file): string
     {
-        $filePath = FileConfig::BASE_FILE_DIRECTORY . DIRECTORY_SEPARATOR .
-        FileConfig::APPROVED_FILE_PREFIX . $file->getUuid() . $file->getPayload()['file_extension'];
-
-        return $filePath;
+        return FileConfig::BASE_FILE_DIRECTORY .
+            DIRECTORY_SEPARATOR . FileConfig::APPROVED_FILE_PREFIX .
+            $file->getUuid() . $file->getPayload()['file_extension'];
     }
 
     public function generateFilePayload(string $fileName, ApprovedFile $approvedFile): FilePayload
@@ -107,9 +107,14 @@ class FileHelper
 
     public function generateDownloadLink(string $fileName, string $fileUuid): string
     {
-        return FileConfig::HTTP_PROTOCOL . FileConfig::getServerName() .
-           FileConfig::FILE_DOWNLOAD_ROUTE . $fileUuid .
-           FileConfig::FILENAME_TOKEN_PREFIX . $fileName;
+        $baseDomain = $_ENV['BASE_DOMAIN'];
+
+        if ($_ENV['BASE_DOMAIN'] === '') {
+            $baseDomain = FileConfig::DEV_BASE_DOMAIN;
+        } 
+        
+        return $baseDomain . FileConfig::FILE_DOWNLOAD_ROUTE .
+            $fileUuid . FileConfig::FILENAME_TOKEN_PREFIX . $fileName;
     }
 
     public static function generateFileContentType(FileFromStorage $file): string
