@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\FileModule\Entity;
 
 use App\Application\DTO\File as DTOFile;
-use App\Repository\FileRepository;
+use App\FileModule\Repository\FileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FileRepository::class)]

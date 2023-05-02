@@ -7,7 +7,7 @@ namespace App\FileModule\Service;
 use App\Application\DTO\File;
 use App\Application\Helpers\FileHelper;
 use App\Application\Interfaces\FileServiceInterface;
-use App\Entity\File as EntityFile;
+use App\FileModule\Entity\File as EntityFile;
 use App\FileModule\Repository\FileRepository;
 use App\FileModule\ValueObject\FileFromStorage;
 use App\FileModule\ValueObject\ParsedFileToken;

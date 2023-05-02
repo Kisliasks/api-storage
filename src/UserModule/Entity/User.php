@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\UserModule\Entity;
 
-use App\Repository\UserRepository;
+use App\UserModule\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
