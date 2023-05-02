@@ -20,7 +20,6 @@ class DownloadFileController extends AbstractController
         private readonly FilePresenter $filePresenter,
         private readonly FileHelper $fileHelper,
     ) {
-
     }
 
     public function downloadFile(Request $request): Response
@@ -37,7 +36,10 @@ class DownloadFileController extends AbstractController
         } catch (EntityNotFoundException) {
             return FileResponse::httpNotFoundResponse();
         } catch (Exception $e) {
-            return FileResponse::errorFileResponse($e->getMessage());
+            return FileResponse::errorFileResponse(
+                $e->getMessage(),
+                $e->getCode(),
+            );
         }
     }
 }

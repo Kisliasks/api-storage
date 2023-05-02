@@ -15,4 +15,15 @@ enum FileConfig
      * @var string
      */
     public const MOCK_FILE_INFO = 'non-existent file info';
+    public const HTTP_PROTOCOL = 'http://';
+    public const FILE_DOWNLOAD_ROUTE = '/api/files/download/';
+    public const FILENAME_TOKEN_PREFIX = '&name=';
+
+    /**
+     * @return string
+     */
+    public static function getServerName(): string
+    {
+        return $_SERVER['SERVER_NAME'];
+    }
 }

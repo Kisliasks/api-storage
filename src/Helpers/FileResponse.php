@@ -11,12 +11,13 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class FileResponse
 {
-    private const CONTENT_TYPE_DOWNLOAD = 'image/gif';
 
     public static function downloadFileResponse(FileFromStorage $file): BinaryFileResponse
     {
         $response = new BinaryFileResponse($file->getFilePath());
-        $response->headers->set('Content-Type', self::CONTENT_TYPE_DOWNLOAD);
+        $contentType = FileHelper::generateFileContentType($file);
+
+        $response->headers->set('Content-Type', $contentType);
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $file->getFileName(),
@@ -47,7 +48,10 @@ class FileResponse
     ): JsonResponse {
         return new JsonResponse(
             ['Error' => $responseData],
-            $responseCode ?? JsonResponse::HTTP_BAD_REQUEST,
+            match ($responseCode) {
+                0, null => JsonResponse::HTTP_BAD_REQUEST,
+                $responseCode > 0 => $responseCode,
+            }
         );
     }
 }

@@ -27,7 +27,6 @@ class UploadFileController extends AbstractController
         private readonly FileServiceInterface $fileService,
         private readonly FilePresenter $filePresenter,
     ) {
-
     }
 
     public function uploadFile(Request $request): Response

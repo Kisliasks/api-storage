@@ -15,9 +15,7 @@ class GetFileController extends AbstractController
     public function __construct(
         private readonly FileServiceInterface $fileService,
         private readonly FilePresenter $filePresenter,
-    )
-    {
-
+    ) {
     }
 
     public function getFile(Request $request): Response

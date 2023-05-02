@@ -6,8 +6,10 @@ namespace App\Helpers;
 
 use App\DTO\File;
 use App\Enum\FileConfig;
+use App\Enum\FileContentType;
 use App\Enum\FileExpression;
 use App\ValueObject\ApprovedFile;
+use App\ValueObject\FileFromStorage;
 use App\ValueObject\FilePayload;
 use App\ValueObject\ParsedFileToken;
 use App\ValueObject\TempMovedFile;
@@ -105,9 +107,18 @@ class FileHelper
 
     public function generateDownloadLink(string $fileName, string $fileUuid): string
     {
-       $downloadLink = 'http://' . $_SERVER['SERVER_NAME'] . '/api/files/download/' . $fileUuid .
-       '&name=' . $fileName;
+        return FileConfig::HTTP_PROTOCOL . FileConfig::getServerName() .
+           FileConfig::FILE_DOWNLOAD_ROUTE . $fileUuid .
+           FileConfig::FILENAME_TOKEN_PREFIX . $fileName;
+    }
 
-       return $downloadLink;
+    public static function generateFileContentType(FileFromStorage $file): string
+    {
+        $fileType = explode('/', $file->getMimeType());
+
+        return match ($fileType[0]) {
+            'image' => FileContentType::IMAGE->value,
+            'application' => FileContentType::TEXT->value,
+        };
     }
 }

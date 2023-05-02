@@ -78,7 +78,8 @@ class FileService implements FileServiceInterface
 
         return new FileFromStorage(
             $file->getPayload()['file_name'],
-            $filePath
+            $filePath,
+            $file->getPayload()['mime_type'],
         );
     }
 }

@@ -9,6 +9,7 @@ class FileFromStorage
     public function __construct(
         private readonly string $fileName,
         private readonly string $filePath,
+        private readonly string $mimeType,
     ) {
     }
 
@@ -26,5 +27,13 @@ class FileFromStorage
     public function getFilePath(): string
     {
         return $this->filePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
     }
 }
