@@ -15,7 +15,7 @@ enum FileConfig: string
      * @var string
      */
     public const MOCK_FILE_INFO = 'non-existent file info';
-    public const HTTP_PROTOCOL = 'http://';
+
     public const FILE_DOWNLOAD_ROUTE = '/api/files/download/';
     public const FILENAME_TOKEN_PREFIX = '&name=';
     public const DEV_BASE_DOMAIN = 'http://127.0.0.1:8080';

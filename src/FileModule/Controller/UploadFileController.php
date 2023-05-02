@@ -60,11 +60,13 @@ class UploadFileController extends AbstractController
             '378509845',
             FileExtractor::extract(
                 $this->fileHelper->generateFilePayload(
-                    $requestData['file_name'], $approvedFile
+                    $requestData['file_name'],
+                    $approvedFile,
                 )
             ),
             $this->fileHelper->generateDownloadLink(
-                $requestData['file_name'], $approvedFile->getFileUuid()
+                $requestData['file_name'],
+                $approvedFile->getFileUuid(),
             ),
         );
  

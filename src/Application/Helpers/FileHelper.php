@@ -28,10 +28,12 @@ class FileHelper
         } else {
             $fileName = uniqid('someFile');
             $fileExtension = "." . $file->getClientOriginalExtension();
-            $filePath = FileConfig::BASE_FILE_DIRECTORY . DIRECTORY_SEPARATOR .
+            $filesDirectory = self::getFilesDirectory();
+
+            $filePath = $filesDirectory . DIRECTORY_SEPARATOR .
                 $fileName . $fileExtension; 
 
-            $file->move(FileConfig::BASE_FILE_DIRECTORY, $fileName . $fileExtension);
+            $file->move($filesDirectory, $fileName . $fileExtension);
         }
 
         return new TempMovedFile($fileName, $filePath, $fileExtension);
@@ -40,17 +42,17 @@ class FileHelper
     public function processApprovedFile(TempMovedFile $tempMovedFile): ApprovedFile
     {
         $fileUuid = Uuid::v4()->toRfc4122();
-        $newFileName = FileConfig::APPROVED_FILE_PREFIX . $fileUuid;
+        $newLocalFileName = FileConfig::APPROVED_FILE_PREFIX . $fileUuid;
 
         $newFilePath = str_replace(
             $tempMovedFile->getFileName() . $tempMovedFile->getFileExtension(),
-            $newFileName . $tempMovedFile->getFileExtension(),
+            $newLocalFileName . $tempMovedFile->getFileExtension(),
             $tempMovedFile->getFilePath(),
         );
         rename($tempMovedFile->getFilePath(), $newFilePath);
 
         return new ApprovedFile(
-            $newFileName,
+            $newLocalFileName,
             $newFilePath,
             $tempMovedFile->getFileExtension(),
             $fileUuid,
@@ -84,7 +86,7 @@ class FileHelper
 
     public static function generateStorageFilePath(File $file): string
     {
-        return FileConfig::BASE_FILE_DIRECTORY .
+        return self::getFilesDirectory() .
             DIRECTORY_SEPARATOR . FileConfig::APPROVED_FILE_PREFIX .
             $file->getUuid() . $file->getPayload()['file_extension'];
     }
@@ -125,5 +127,15 @@ class FileHelper
             'image' => FileContentType::IMAGE->value,
             'application' => FileContentType::TEXT->value,
         };
+    }
+
+    private static function getFilesDirectory(): string
+    {
+        $filesDirectory = $_ENV['FILES_DIRECTORY'];
+        if ($_ENV['FILES_DIRECTORY'] === '') {
+            $filesDirectory = FileConfig::BASE_FILE_DIRECTORY;
+        }
+
+        return $filesDirectory;
     }
 }
