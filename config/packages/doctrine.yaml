@@ -17,6 +17,12 @@ doctrine:
                 prefix: 'App\FileModule\Entity'
                 alias: FileModule
 
+            UserModule:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/UserModule/Entity'
+                prefix: 'App\UserModule\Entity'
+                alias: UserModule
+
 # when@test:
 #     doctrine:
 #         dbal:

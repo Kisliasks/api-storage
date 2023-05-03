@@ -15,9 +15,11 @@ class FileResponse
     public static function downloadFileResponse(FileFromStorage $file): BinaryFileResponse
     {
         $response = new BinaryFileResponse($file->getFilePath());
-        $contentType = FileHelper::generateFileContentType($file);
-
-        $response->headers->set('Content-Type', $contentType);
+       
+        $response->headers->set(
+            'Content-Type',
+            FileHelper::generateFileContentType($file)
+        );
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $file->getFileName(),
